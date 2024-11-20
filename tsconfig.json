@@ -5,6 +5,7 @@
     "module": "commonjs",
     "target": "ES2021",
     "declaration": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "./dist"
   },
   "include": [
