@@ -166,6 +166,9 @@ export class Request {
         values: data,
         // to trigger the default values logic for the rest of the columns
         columns: columns as [string, ...string[]],
+        clickhouse_settings: {
+          date_time_input_format: 'best_effort',
+        },
       });
     }
   }
