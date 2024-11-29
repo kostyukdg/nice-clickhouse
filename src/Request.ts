@@ -48,7 +48,7 @@ export class Request {
   private parameters: {
     name: string;
     value: unknown;
-    type: SqlType['type'];
+    type: SqlType;
   }[] = [];
 
   constructor(private pool: ClickHouseClient) {}
@@ -96,7 +96,7 @@ export class Request {
       for (const { name, type, value } of this.parameters) {
         commandWithParameters = commandWithParameters.replaceAll(
           `@${name}`,
-          `{${name}: ${type}}`,
+          `{${name}: ${type()}}`,
         );
         queryParams[name] = value;
       }
@@ -134,14 +134,14 @@ export class Request {
     }, Request.prototype.query);
   }
 
-  public input(name: string, type: () => SqlType, value: unknown) {
-    this.parameters.push({ name, value, type: type().type });
+  public input(name: string, type: SqlType, value: unknown) {
+    this.parameters.push({ name, value, type: type });
     return this;
   }
 
   public parametrizeInClause(
     name: string,
-    type: () => SqlType,
+    type: SqlType,
     values: unknown[],
   ): string {
     return values
