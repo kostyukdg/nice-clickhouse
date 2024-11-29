@@ -2,9 +2,12 @@ import { ClickHouseClient } from '@clickhouse/client';
 import { getPool, getSlowQueryLogger, SlowQueryLogger } from './utils';
 import { ClickHouseError } from './errors/ClickHouseError';
 import { Request } from './Request';
+import { SqlType } from './types';
 
-export class QueryRepository {
+export class QueryRepository<Entity = Record<string, unknown>> {
   private pool: ClickHouseClient = getPool();
+
+  protected types: Partial<Record<keyof Entity, SqlType>> = {};
 
   /**
    * Max execution time for all slow queries in the instance
