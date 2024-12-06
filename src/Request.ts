@@ -94,7 +94,7 @@ export class Request {
       const queryParams: Record<string, unknown> = {};
 
       for (const { name, type, value } of this.parameters) {
-        const regex = new RegExp(`(?<=\\W)${name}(?=\\W)`, 'g');
+        const regex = new RegExp(`(?<!\\w)@${name}(?!\\w)`, 'g');
         commandWithParameters = commandWithParameters.replace(
           regex,
           `{${name}: ${type()}}`,
