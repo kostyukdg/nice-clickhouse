@@ -88,24 +88,34 @@ export class Request {
     return wrapError(callback);
   }
 
+  private prepareQueryParameters(query: string) {
+    let queryWithParameters = query;
+    const queryParameters: Record<string, unknown> = {};
+
+    for (const { name, type, value } of this.parameters) {
+      const regex = new RegExp(`(?<!\\w)@${name}(?!\\w)`, 'g');
+      queryWithParameters = queryWithParameters.replace(
+        regex,
+        `{${name}: ${type()}}`,
+      );
+      queryParameters[name] = value;
+    }
+
+    return {
+      queryWithParameters,
+      queryParameters,
+    };
+  }
+
   public query<Entity>(command: string): Promise<Entity[]> {
     return this.executeMethod(async () => {
-      let commandWithParameters = command;
-      const queryParams: Record<string, unknown> = {};
-
-      for (const { name, type, value } of this.parameters) {
-        const regex = new RegExp(`(?<!\\w)@${name}(?!\\w)`, 'g');
-        commandWithParameters = commandWithParameters.replace(
-          regex,
-          `{${name}: ${type()}}`,
-        );
-        queryParams[name] = value;
-      }
+      const { queryWithParameters, queryParameters } =
+        this.prepareQueryParameters(command);
 
       const response = await this.pool.query({
-        query: commandWithParameters,
+        query: queryWithParameters,
         format: 'JSONCompactEachRowWithNamesAndTypes',
-        query_params: queryParams,
+        query_params: queryParameters,
         clickhouse_settings: {
           date_time_input_format: 'best_effort',
           date_time_output_format: 'iso',
@@ -133,6 +143,21 @@ export class Request {
         return entity as Entity;
       });
     }, Request.prototype.query);
+  }
+
+  public command(command: string): Promise<void> {
+    return this.executeMethod(async () => {
+      const { queryWithParameters, queryParameters } =
+        this.prepareQueryParameters(command);
+
+      await this.pool.command({
+        query: queryWithParameters,
+        query_params: queryParameters,
+        clickhouse_settings: {
+          date_time_input_format: 'best_effort',
+        },
+      });
+    }, Request.prototype.command);
   }
 
   public input(name: string, type: SqlType, value: unknown) {
