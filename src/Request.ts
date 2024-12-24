@@ -5,7 +5,7 @@ import {
 import { ClickHouseError } from './errors/ClickHouseError';
 import { ClickHouseSlowQueryError } from './errors/ClickHouseSlowQueryError';
 import { SlowQueryLogger } from './utils';
-import { SqlType } from './types';
+import { DateTime, SqlType } from './types';
 
 type RequestExecutionMethod =
   | typeof Request.prototype.query
@@ -98,7 +98,14 @@ export class Request {
         regex,
         `{${name}: ${type()}}`,
       );
+
       queryParameters[name] = value;
+      // ClickHouse does not support DateTime with milliseconds
+      if (type === DateTime && value instanceof Date) {
+        const date = new Date(value);
+        date.setMilliseconds(0);
+        queryParameters[name] = date;
+      }
     }
 
     return {
