@@ -93,15 +93,17 @@ export class Request {
     const queryParameters: Record<string, unknown> = {};
 
     for (const { name, type, value } of this.parameters) {
+      const clickhouseType = type();
+
       const regex = new RegExp(`(?<!\\w)@${name}(?!\\w)`, 'g');
       queryWithParameters = queryWithParameters.replace(
         regex,
-        `{${name}: ${type()}}`,
+        `{${name}: ${clickhouseType}}`,
       );
 
       queryParameters[name] = value;
       // ClickHouse does not support DateTime with milliseconds
-      if (type === DateTime && value instanceof Date) {
+      if (clickhouseType.includes('DateTime') && value instanceof Date) {
         const date = new Date(value);
         date.setMilliseconds(0);
         queryParameters[name] = date;
