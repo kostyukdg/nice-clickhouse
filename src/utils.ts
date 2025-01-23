@@ -30,6 +30,11 @@ export async function connectToClickHouse(connectionConfig: Config) {
     config = { ...config, slowQueryLogger: undefined };
   }
   client = createClient(config);
+
+  const pong = await client.ping();
+  if (!pong.success) {
+    throw pong.error;
+  }
 }
 
 export function getPool() {
