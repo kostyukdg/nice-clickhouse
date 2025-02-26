@@ -5,10 +5,11 @@ import {
 import { ClickHouseError } from './errors/ClickHouseError';
 import { ClickHouseSlowQueryError } from './errors/ClickHouseSlowQueryError';
 import { SlowQueryLogger } from './utils';
-import { DateTime, SqlType } from './types';
+import { SqlType } from './types';
 
 type RequestExecutionMethod =
   | typeof Request.prototype.query
+  | typeof Request.prototype.command
   | typeof Request.prototype.insert;
 
 async function wrapError<T>(callback: () => Promise<T>) {
@@ -195,16 +196,18 @@ export class Request {
   ) {
     const columns = Object.keys(data[0]);
     if (columns.length > 0) {
-      await this.pool.insert({
-        table,
-        format: 'JSONEachRow',
-        values: data,
-        // to trigger the default values logic for the rest of the columns
-        columns: columns as [string, ...string[]],
-        clickhouse_settings: {
-          date_time_input_format: 'best_effort',
-        },
-      });
+      return this.executeMethod(async () => {
+        await this.pool.insert({
+          table,
+          format: 'JSONEachRow',
+          values: data,
+          // to trigger the default values logic for the rest of the columns
+          columns: columns as [string, ...string[]],
+          clickhouse_settings: {
+            date_time_input_format: 'best_effort',
+          },
+        });
+      }, Request.prototype.insert);
     }
   }
 }
