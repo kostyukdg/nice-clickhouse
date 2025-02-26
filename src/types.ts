@@ -22,6 +22,14 @@ export function UInt16(): ReturnType<SqlType> {
   return 'UInt16';
 }
 
+export function Float32(): ReturnType<SqlType> {
+  return 'Float32';
+}
+
+export function Float64(): ReturnType<SqlType> {
+  return 'Float64';
+}
+
 export function DateTime(): ReturnType<SqlType> {
   return 'DateTime';
 }
