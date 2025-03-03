@@ -10,8 +10,28 @@ export function String(): ReturnType<SqlType> {
   return 'String';
 }
 
-export function UInt32(): ReturnType<SqlType> {
-  return 'UInt32';
+export function Int8(): ReturnType<SqlType> {
+  return 'Int8';
+}
+
+export function Int16(): ReturnType<SqlType> {
+  return 'Int16';
+}
+
+export function Int32(): ReturnType<SqlType> {
+  return 'Int32';
+}
+
+export function Int64(): ReturnType<SqlType> {
+  return 'Int64';
+}
+
+export function Int128(): ReturnType<SqlType> {
+  return 'Int128';
+}
+
+export function Int256(): ReturnType<SqlType> {
+  return 'Int256';
 }
 
 export function UInt8(): ReturnType<SqlType> {
@@ -20,6 +40,22 @@ export function UInt8(): ReturnType<SqlType> {
 
 export function UInt16(): ReturnType<SqlType> {
   return 'UInt16';
+}
+
+export function UInt32(): ReturnType<SqlType> {
+  return 'UInt32';
+}
+
+export function UInt64(): ReturnType<SqlType> {
+  return 'UInt64';
+}
+
+export function UInt128(): ReturnType<SqlType> {
+  return 'UInt128';
+}
+
+export function UInt256(): ReturnType<SqlType> {
+  return 'UInt256';
 }
 
 export function Float32(): ReturnType<SqlType> {
