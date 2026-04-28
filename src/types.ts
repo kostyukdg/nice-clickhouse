@@ -77,3 +77,7 @@ export function Boolean(): ReturnType<SqlType> {
 export function Decimal(precision: number, scale: number): SqlType {
   return () => `Decimal(${precision},${scale})`;
 }
+
+export function Array(type: SqlType): SqlType {
+  return () => `Array(${type()})`;
+}
