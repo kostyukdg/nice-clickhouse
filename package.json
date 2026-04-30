@@ -1,6 +1,6 @@
 {
   "name": "nice-clickhouse",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Clickhouse client",
   "keywords": [
     "database",
